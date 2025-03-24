@@ -14,7 +14,7 @@ This is an open-source web application that allows students to check their diplo
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/diploma-result-checker.git
+   git clone https://github.com/nafijninja/result.git
 
 
 Contributing
