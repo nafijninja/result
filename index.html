@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bteb Result Checker</title>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    /* Navbar */
+    #navbar {
+      background-color: #34495e;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    #navbar .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    #navbar .logo img {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
+
+    #navbar .logo span {
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+    }
+
+    #navbar .navbar-links {
+      display: flex;
+      gap: 15px;
+    }
+
+    #navbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      padding: 5px 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    #navbar a:hover {
+      background-color: #2980b9;
+      border-radius: 5px;
+    }
+
+    /* Hamburger Icon (📃) */
+    #hamburger {
+      font-size: 30px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* Drawer Menu */
+    #drawer {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 250px;
+      height: 100%;
+      background-color: #34495e;
+      color: white;
+      padding-top: 60px;
+      box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    #drawer a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      font-size: 18px;
+      transition: background-color 0.3s ease;
+    }
+
+    #drawer a:hover {
+      background-color: #2980b9;
+    }
+
+    /* Marquee Text */
+    #marquee-container {
+      background-color: #2c3e50;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    /* Notice Section */
+    #notice {
+      background-color: #f39c12;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 10px;
+      margin: 20px auto;
+      max-width: 90%;
+    }
+
+    /* Section Styles */
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 20px;
+    }
+
+    .section {
+      margin: 30px 0;
+      padding: 20px;
+      background-color: #ecf0f1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    /* Buttons */
+    .btn {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+      margin-top: 15px;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+    }
+
+    /* Icons Section */
+    .icons {
+      font-size: 40px;
+      color: #3498db;
+      margin-bottom: 10px;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #34495e;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      width: 100%;
+      position: relative;
+      bottom: 0;
+    }
+
+    footer a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+
+      /* Navbar on small screens */
+      #navbar .navbar-links {
+        display: none;
+      }
+
+      /* Hamburger Menu */
+      #hamburger {
+        display: block;
+      }
+
+      /* Drawer on small screens */
+      #drawer {
+        display: block;
+        transition: transform 0.3s ease-in-out;
+        transform: translateX(100%);
+      }
+
+      #drawer.show {
+        transform: translateX(0);
+      }
+
+      .container {
+        width: 95%;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .btn {
+        width: 80%;
+        padding: 12px;
+      }
+
+    }
+
+    /* Service Boxes section3 */
+    .service {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      margin: 15px 0;
+    }
+
+    /*  Hover Effects */
+    /* General Hover Effects */
+    a:hover,
+    .btn:hover {
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    /* Navbar links hover */
+    #navbar a:hover {
+      background-color: #2980b9;
+      border-radius: 5px;
+    }
+
+    /* Button Hover Effect */
+    .btn:hover {
+      background-color: #2980b9;
+      transform: scale(1.05);
+      /* Slightly enlarge on hover */
+    }
+
+    /* Service Box Hover Effect */
+    .service:hover {
+      transform: translateY(-5px);
+      /* Lift the box on hover */
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+      /* Increase shadow on hover */
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Drawer Menu Links Hover Effect */
+    #drawer a:hover {
+      background-color: #2980b9;
+    }
+
+    /* Hamburger Icon Hover Effect */
+    #hamburger:hover {
+      color: #2980b9;
+      /* Change color of hamburger icon on hover */
+      cursor: pointer;
+    }
+
+    /*  Hover Effects */
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <div id="navbar">
+    <div class="logo">
+      <img src="logo.webp" alt="Logo">
+      <span>RESULT</span>
+    </div>
+    <div class="navbar-links">
+      <a href="#">Home</a>
+      <a href="about.html">About</a>
+      <a href="terms.html">terms</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <!-- Hamburger Icon -->
+    <div id="hamburger">📃</div>
+  </div>
+
+  <!-- Drawer Menu -->
+  <div id="drawer">
+    <a href="#">Home</a>
+    <a href="about.html">About</a>
+    <a href="terms.html">terms</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <!-- Marquee text -->
+  <div id="marquee-container">
+    <marquee behavior="scroll" direction="left">WEBSITE IS RUNNING</marquee>
+  </div>
+
+  <!-- Notice Section -->
+  <div id="notice">
+    <p>Notice Section</p>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+
+    <!-- Section 1 -->
+    <div class="section">
+      <h2>Welcome to Our Advanced Website</h2>
+      <p>This website provides a modern, responsive design with smooth animations.</p>
+      <a href="student.html" class="btn">View Results</a>
+    </div>
+
+    <!-- Services Section -->
+    <div class="section">
+      <h2>Our Services</h2>
+      <p>Explore the best services we provide for you.</p>
+
+      <!-- Service 1 -->
+      <div class="service">
+        <h3>📊 Performance Tracking</h3>
+        <p>Monitor real-time results efficiently.</p>
+      </div>
+
+      <!-- Service 2 -->
+      <div class="service">
+        <h3>🎓 Education Support</h3>
+        <p>Get expert guidance and study tips.</p>
+      </div>
+
+      <!-- Service 3 -->
+      <div class="service">
+        <h3>⚙️ Automation Tools</h3>
+        <p>Utilize smart tools for better productivity.</p>
+      </div>
+
+      <!-- Button -->
+      <a href="index.html" class="btn">Explore More</a>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section">
+      <h2>Stay Updated</h2>
+      <p>Get the latest updates and results, ensuring you always have fresh information.</p>
+      <a href="https://m.facebook.com/nafijrahaman2023" class="btn">Stay Updated</a>
+    </div>
+
+  </div>
+
+  <!-- Footer Section -->
+  <footer>
+    <p>Created by <a href="https://m.facebook.com/nafijrahaman2023" target="_blank">NAFIJ RAHAMAN</a></p>
+  </footer>
+
+  <script>
+    // Toggle Drawer Menu
+    const hamburger = document.getElementById('hamburger');
+    const drawer = document.getElementById('drawer');
+    hamburger.addEventListener('click', () => {
+      drawer.classList.toggle('show');
+    });
+
+    // Close drawer when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!drawer.contains(e.target) && !hamburger.contains(e.target)) {
+        drawer.classList.remove('show');
+      }
+    });
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Me NAFIJ RAHAMAN</title>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="styles.css"> <!-- Link to your main CSS -->
+  <style>
+    /* General Styling */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    /* Container */
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+
+    /* Header */
+    h1 {
+      text-align: center;
+      font-size: 32px;
+      color: #34495e;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      font-size: 24px;
+      color: #2980b9;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.8;
+      margin: 15px 0;
+    }
+
+    /* Hover Effects */
+    .hover-effect:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    /* About Me Section */
+    .about-me {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .about-me img {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 5px solid #3498db;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+      margin-right: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .about-me img:hover {
+      transform: rotate(360deg);
+    }
+
+    .about-me-text {
+      flex: 1;
+      max-width: 650px;
+    }
+
+    .about-me-text h3 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .about-me-text p {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* Skills Section */
+    .skills {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
+      flex-wrap: wrap;
+    }
+
+    .skill {
+      flex: 1;
+      margin: 10px;
+      padding: 20px;
+      background-color: #ecf0f1;
+      border-radius: 10px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .skill:hover {
+      transform: translateY(-5px);
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .skill i {
+      font-size: 40px;
+      margin-bottom: 15px;
+      color: #3498db;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #34495e;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    footer a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .about-me {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .about-me img {
+        margin: 0 0 20px 0;
+      }
+
+      .skills {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .skill {
+        width: 80%;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>About Me</h1>
+
+    <!-- About Me Section -->
+    <div class="about-me hover-effect">
+      <img src="my-image.png" alt="NAFIJ RAHAMAN"> <!-- Replace with your actual image -->
+      <div class="about-me-text">
+        <h3>NAFIJ RAHAMAN</h3>
+        <p>I am an 18-year-old student currently pursuing a **Diploma in Engineering** in the **Electrical Department**
+          at **Magura Polytechnic Institute**. I am passionate about technology, electrical engineering, and learning
+          new skills every day.</p>
+        <p>Besides studying, I am keen to expand my knowledge in various fields, including **coding**, **electronics**,
+          and **automation**. I'm also actively working on projects and looking forward to applying my skills in
+          real-world applications.</p>
+      </div>
+    </div>
+
+    <!-- Skills Section -->
+    <div class="skills">
+      <div class="skill hover-effect">
+        <i class="fas fa-laptop-code"></i>
+        <h4>Coding</h4>
+        <p>I am learning programming languages like **Python**, **C**, and **Java** to develop applications.</p>
+      </div>
+
+      <div class="skill hover-effect">
+        <i class="fas fa-plug"></i>
+        <h4>Electrical Engineering</h4>
+        <p>My field of study includes **circuit design**, **power systems**, and **automation**.</p>
+      </div>
+
+      <div class="skill hover-effect">
+        <i class="fas fa-lightbulb"></i>
+        <h4>Innovation</h4>
+        <p>I love coming up with creative solutions for everyday problems using engineering principles.</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>Created by <a href="https://m.facebook.com/nafijrahaman2023" target="_blank">NAFIJ RAHAMAN</a></p>
+    </footer>
+  </div>
+
+</body>
+
+</html>

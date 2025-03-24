@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="firebase-config.js"></script>
+</head>
+
+<body>
+  <div class="admin-container">
+    <h2>Welcome, Admin</h2>
+    <button id="logout">Logout</button>
+
+    <h3>Upload Results</h3>
+    <textarea id="resultInput" placeholder="Paste results here..."></textarea>
+    <button id="uploadResults">Upload</button>
+    <p id="status"></p>
+  </div>
+
+  <script type="module">
+    import { auth, db } from "./firebase-config.js";
+    import { ref, update } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+
+    // ✅ Redirect if not logged in
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "admin-login.html";
+      }
+    });
+
+    // ✅ Logout functionality
+    document.getElementById("logout").addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "admin-login.html";
+      }).catch(error => {
+        console.error("❌ Logout Error:", error);
+      });
+    });
+
+    // ✅ Upload results
+    document.getElementById("uploadResults").addEventListener("click", async () => {
+      let inputText = document.getElementById("resultInput").value.trim();
+      let statusMsg = document.getElementById("status");
+      statusMsg.innerText = ""; // Clear previous messages
+
+      if (!inputText) {
+        alert("❌ Please paste results!");
+        return;
+      }
+
+      let results = {};
+      let lines = inputText.split("\n");
+
+      // ✅ Advanced Regex & Validation
+      let validPattern = /^(\d{6})\s*\(([^)]+)\)\s*\[Referred:\s*([^\]]*)\]?\s*$/;
+      // Matches "123456 (1st: 3.5, 2nd: 3.8) [Referred: 101, 202]"
+
+      lines.forEach(line => {
+        let match = line.match(validPattern);
+        if (match) {
+          let roll = match[1].trim(); // Extract roll number
+          let gpaData = {};
+          let semesterCount = 0; // Count semesters
+
+          let gpaEntries = match[2].split(","); // "1st: 3.5, 2nd: 3.8"
+          gpaEntries.forEach(entry => {
+            if (semesterCount < 8) { // ✅ Max 8 semesters allowed
+              let [key, value] = entry.split(":").map(str => str.trim());
+              if (key && value && !isNaN(value)) {
+                gpaData[key] = parseFloat(value);
+                semesterCount++;
+              }
+            }
+          });
+
+          let referredSubjects = match[3] ? match[3].trim() : "None"; // Extract referred subjects
+
+          // ✅ Only add valid GPA data
+          if (Object.keys(gpaData).length > 0) {
+            results[roll] = {
+              gpa: gpaData,
+              referred: referredSubjects
+            };
+          }
+        }
+      });
+
+      if (Object.keys(results).length === 0) {
+        statusMsg.innerText = "❌ No valid results found!";
+        return;
+      }
+
+      console.log("✅ Parsed Results:", results); // Debugging
+
+      try {
+        for (let roll in results) {
+          let dbRef = ref(db, "results/" + roll);
+          console.log(`📡 Uploading: ${roll} →`, results[roll]); // Log each upload
+          await update(dbRef, results[roll]);
+        }
+        statusMsg.innerText = "✅ Results uploaded successfully!";
+        document.getElementById("resultInput").value = ""; // Clear input field
+      } catch (error) {
+        console.error("❌ Firebase Upload Error:", error);
+        statusMsg.innerText = "❌ Error uploading results!";
+      }
+    });
+  </script>
+</body>
+
+</html>

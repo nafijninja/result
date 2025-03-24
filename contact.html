@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Me - NAFIJ RAHAMAN</title>
+  <link rel="stylesheet" href="styles.css"> <!-- Link to your main CSS -->
+  <style>
+    /* General Styling */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      text-align: center;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      box-shadow: 0px 8px 20px rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #f8f8f8;
+    }
+
+    p {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #e0e0e0;
+    }
+
+    /* Social Media Links */
+    .social-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .social-links a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      text-decoration: none;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .social-links a img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .social-links a:hover {
+      background: white;
+      color: #2a5298;
+      transform: scale(1.2);
+      box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Contact Form */
+    .contact-form {
+      margin-top: 40px;
+      text-align: left;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .contact-form textarea {
+      height: 80px;
+      resize: none;
+    }
+
+    .contact-form button {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      background: white;
+      color: #2a5298;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .contact-form button:hover {
+      background: #2a5298;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    /* Fade-in Animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .social-links a {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+      }
+
+      .contact-form input,
+      .contact-form textarea,
+      .contact-form button {
+        padding: 10px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Contact Me</h1>
+    <p>Feel free to reach out to me via any of the platforms below:</p>
+
+    <!-- Social Media Links -->
+    <div class="social-links">
+      <!-- YouTube -->
+      <a href="https://youtube.com/@nafijrahaman2022" target="_blank">
+        <img src="youtube.png" alt="YouTube">
+      </a>
+
+      <!-- Facebook -->
+      <a href="https://m.facebook.com/nafijrahaman2023" target="_blank">
+        <img src="facebook.png" alt="Facebook">
+      </a>
+
+      <!-- Instagram -->
+      <a href="https://instagram.com/nafijrahaman" target="_blank">
+        <img src="instagram.png" alt="Instagram">
+      </a>
+
+      <!-- TikTok -->
+      <a href="https://www.tiktok.com/@nafij-rahaman" target="_blank">
+        <img src="tiktok.png" alt="TikTok">
+      </a>
+
+      <!-- Telegram -->
+      <a href="https://t.me/nafijrahaman" target="_blank">
+        <img src="telegram.png" alt="Telegram">
+      </a>
+
+      <!-- WhatsApp -->
+      <a href="https://wa.me/01944955128" target="_blank">
+        <img src="whatsapp.png" alt="WhatsApp">
+      </a>
+
+      <!-- Messenger -->
+      <a href="https://m.me/nafijrahaman" target="_blank">
+        <img src="messenger.png" alt="Messenger">
+      </a>
+
+      <!-- LinkedIn -->
+      <a href="https://www.linkedin.com/in/nafijrahaman" target="_blank">
+        <img src="linkedin.png" alt="LinkedIn">
+      </a>
+
+      <!-- Phone Call -->
+      <a href="tel:+8801944955128">
+        <img src="phone.png" alt="Call Me">
+      </a>
+
+      <!-- Email -->
+      <a href="mailto:nafijrahaman2022@gmail.com">
+        <img src="email.png" alt="Email Me">
+      </a>
+    </div>
+
+
+    <!-- Contact Form -->
+    <div class="contact-form">
+      <h2 style="color: #fff;">Send Me a Message</h2>
+      <form action="https://formsubmit.co/nafijrahaman2022@gmail.com" method="POST">
+        <!-- Redirect to contacts.html after submission -->
+        <input type="hidden" name="_next" value="success.html">
+
+        <!-- Custom Subject for Email -->
+        <input type="hidden" name="_subject" value="New Contact Form Submission">
+
+        <!-- Disable Captcha -->
+        <input type="hidden" name="_captcha" value="false">
+
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <textarea name="message" placeholder="Your Message" required></textarea>
+
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+
+
+</body>
+
+</html>
