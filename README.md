@@ -26,6 +26,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 Author
 NAFIJ RAHAMAN
 
+## Installation
+
+1. server:
+   ```bash
+   [git clone https://github.com/nafijninja/result.git](https://result-silk.vercel.app/index.html)
+
 vbnet
 Copy
 Edit
