@@ -7,27 +7,56 @@
   <title>Admin Login</title>
   <link rel="stylesheet" href="style.css">
   <script type="module" src="firebase-config.js"></script>
+
+  <style>
+    /* Loading Spinner */
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 2s linear infinite;
+      margin: 10px auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .error-message {
+      color: red;
+    }
+  </style>
 </head>
 
 <body>
   <div class="admin-login-container">
     <h2>Admin Login</h2>
     <button id="googleLogin">Login with Google</button>
+    <div id="loading" class="loading-spinner" style="display:none;"></div>
     <p id="loginMessage"></p>
+    <p id="errorMessage" class="error-message"></p> <!-- Error message for login failure -->
   </div>
 
   <script type="module">
     import { auth, provider, signInWithPopup } from "./firebase-config.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
 
-    // 🔥 এই ইমেইলগুলোকেই শুধু অ্যাডমিন হিসেবে allow করবো
-    const adminEmails = ["nafijrahaman2026@gmail.com", "nafijrahaman19721@gmail.com" , "nafijrahama2022@gmail.com"];
+    // 🔥 Admin emails allowed to login
+    const adminEmails = ["nafijrahaman2026@gmail.com", "anotheradmin@example.com"];
 
-    // 🔹 আগের লগইন আছে কিনা চেক করবো
+    // 🔹 Check if the user is already logged in
     onAuthStateChanged(auth, (user) => {
       if (user) {
         if (adminEmails.includes(user.email)) {
-          window.location.href = "admin.html";
+          window.location.href = "admin.html"; // Redirect to admin page if admin
         } else {
           document.getElementById("loginMessage").innerText = "You are not an admin!";
         }
@@ -35,17 +64,28 @@
     });
 
     document.getElementById("googleLogin").addEventListener("click", () => {
+      // Show loading spinner when login starts
+      document.getElementById("loading").style.display = "block";
+      document.getElementById("loginMessage").innerText = ""; // Clear any previous messages
+      document.getElementById("errorMessage").innerText = ""; // Clear error message
+
       signInWithPopup(auth, provider)
         .then((result) => {
           const user = result.user;
+          // Hide the loading spinner after login attempt
+          document.getElementById("loading").style.display = "none";
+
           if (adminEmails.includes(user.email)) {
-            window.location.href = "admin.html";
+            window.location.href = "admin.html"; // Redirect to admin page if admin
           } else {
             document.getElementById("loginMessage").innerText = "You are not an admin!";
           }
         })
         .catch(error => {
-          document.getElementById("loginMessage").innerText = "Login failed!";
+          // Hide the loading spinner and show error message
+          document.getElementById("loading").style.display = "none";
+          document.getElementById("errorMessage").innerText = "Login failed! Please try again.";
+          console.error("Login failed:", error);
         });
     });
   </script>
