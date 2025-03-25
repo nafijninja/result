@@ -32,6 +32,14 @@
 
     .error-message {
       color: red;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    #loginMessage {
+      font-size: 16px;
+      color: green;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -50,10 +58,12 @@
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
 
     // 🔥 Admin emails allowed to login
-    const adminEmails = ["nafijrahaman2026@gmail.com", 
+    const adminEmails = [
+        "nafijrahaman2026@gmail.com", 
         "anotheradmin@example.com",
         "nafijrahaman19721@gmail.com",  // New admin email
-        "nafijrahaman2022@gmail.com"    // New admin email];
+        "nafijrahaman2022@gmail.com"    // New admin email
+    ];
 
     // 🔹 Check if the user is already logged in
     onAuthStateChanged(auth, (user) => {
@@ -87,7 +97,17 @@
         .catch(error => {
           // Hide the loading spinner and show error message
           document.getElementById("loading").style.display = "none";
-          document.getElementById("errorMessage").innerText = "Login failed! Please try again.";
+          
+          // Display the error message based on the error type
+          if (error.code === 'auth/popup-closed-by-user') {
+            document.getElementById("errorMessage").innerText = "The popup was closed before completing login.";
+          } else if (error.code === 'auth/cancelled-popup-request') {
+            document.getElementById("errorMessage").innerText = "You cancelled the login request.";
+          } else if (error.code === 'auth/network-request-failed') {
+            document.getElementById("errorMessage").innerText = "Network error! Please check your connection.";
+          } else {
+            document.getElementById("errorMessage").innerText = "Login failed! Please try again.";
+          }
           console.error("Login failed:", error);
         });
     });
