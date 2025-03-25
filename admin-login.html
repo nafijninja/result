@@ -50,7 +50,10 @@
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
 
     // 🔥 Admin emails allowed to login
-    const adminEmails = ["nafijrahaman2026@gmail.com", "anotheradmin@example.com"];
+    const adminEmails = ["nafijrahaman2026@gmail.com", 
+        "anotheradmin@example.com",
+        "nafijrahaman19721@gmail.com",  // New admin email
+        "nafijrahaman2022@gmail.com"    // New admin email];
 
     // 🔹 Check if the user is already logged in
     onAuthStateChanged(auth, (user) => {
