@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result Formatter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .output {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-family: monospace;
+            font-size: 16px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Result Formatter</h1>
+
+        <!-- Input Section -->
+        <div class="section">
+            <h2>Enter Original Results</h2>
+            <textarea id="inputResult" placeholder="Enter your results here..."></textarea>
+        </div>
+
+        <!-- Convert Button -->
+        <div class="section">
+            <button onclick="formatResult()">Convert Result</button>
+        </div>
+
+        <!-- Output Section -->
+        <div class="section">
+            <h2>Formatted Result</h2>
+            <div id="outputResult" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        function formatResult() {
+            const inputText = document.getElementById("inputResult").value.trim();
+            const outputElement = document.getElementById("outputResult");
+
+            // Clear the output first
+            outputElement.textContent = "";
+
+            console.log("Input Text:", inputText);  // Debugging input text
+
+            // Updated regular expression to handle 8 GPAs and multiple referred subjects
+            const regex = /(\d+)\s*\{\s*gpa8:\s*(ref|\d+\.\d*),\s*gpa7:\s*(ref|\d+\.\d*),\s*gpa6:\s*(ref|\d+\.\d*),\s*gpa5:\s*(ref|\d+\.\d*),\s*gpa4:\s*(ref|\d+\.\d*),\s*gpa3:\s*(ref|\d+\.\d*),\s*gpa2:\s*(ref|\d+\.\d*),\s*gpa1:\s*(ref|\d+\.\d*),\s*ref_sub:\s*([0-9(),T\s]+)\s*\}/g;
+
+            let matches;
+            let found = false;  // Track if we found any valid data
+
+            while ((matches = regex.exec(inputText)) !== null) {
+                console.log("Match found:", matches);  // Debugging the match
+
+                found = true; // Valid data found
+
+                const studentId = matches[1];
+                const gpa8 = matches[2];
+                const gpa7 = matches[3];
+                const gpa6 = matches[4];
+                const gpa5 = matches[5];
+                const gpa4 = matches[6];
+                const gpa3 = matches[7];
+                const gpa2 = matches[8];
+                const gpa1 = matches[9];
+                const refSub = matches[10];
+
+                // Create GPA list (1st to 8th)
+                const gpas = [gpa1, gpa2, gpa3, gpa4, gpa5, gpa6, gpa7, gpa8];
+                const formattedGPA = gpas.map((gpa, index) => `${index + 1}st: ${gpa}`).join(", ");
+
+                // Handle Referred Subjects List for multiple subjects
+                const referredSubjects = refSub.split(",").map(ref => ref.trim()).join(", ");
+                const referredText = referredSubjects ? `[Referred: ${referredSubjects}]` : "[Referred: None]";
+
+                // Construct the formatted result
+                const formattedResult = `${studentId} (${formattedGPA}) ${referredText}`;
+
+                // Append formatted result to the output
+                outputElement.textContent += formattedResult + "\n";
+            }
+
+            // If no results matched, show an error
+            if (!found) {
+                outputElement.textContent = "No valid results found. Please check the input format.";
+            }
+        }
+    </script>
+
+</body>
+</html>
