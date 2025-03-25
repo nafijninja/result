@@ -1,0 +1,220 @@
+731559 { gpa8: 3.17, gpa7: 3.10, gpa6: 3.25, gpa5: 3.00, gpa4: 2.76, gpa3: 2.85, gpa2: ref, gpa1: 3.00, ref_sub: 25912(T), 26731(T), 26742(T) }
+731573 { gpa8: ref, gpa7: 3.33, gpa6: 3.15, gpa5: 3.20, gpa4: ref, gpa3: 3.15, gpa2: 2.99, gpa1: 3.33, ref_sub: 26843(T) }
+731601 { gpa8: 3.17, gpa7: ref, gpa6: 3.05, gpa5: 2.90, gpa4: 3.17, gpa3: ref, gpa2: 2.84, gpa1: 2.93, ref_sub: 26731(T), 25912(T) }
+
+
+632744 { gpa4: ref, gpa3: ref, gpa2: 3.21, gpa1:
+2.98, ref_sub: 25931(T), 27041(T), 28567(T) }
+
+632761 { gpa4: ref, gpa3: 2.79, gpa2: 2.88, gpa1:
+3.04, ref_sub: 29241(T) }
+
+632762 { gpa4: ref, gpa3: 2.71, gpa2: 2.74, gpa1:
+2.64, ref_sub: 27041(T), 27131(T), 28567(T) }
+
+632765 { gpa4: ref, gpa3: 2.70, gpa2: 2.77, gpa1:
+2.73, ref_sub: 27041(T), 28567(T), 29241(T) }
+
+632783 { gpa4: ref, gpa3: ref, gpa2: ref, gpa1: ref,
+ref_sub: 25912(T), 25921(T), 26711(T), 26811(T),
+26821(T), 27031(T), 27032(T), 27041(T),
+29241(T) }
+
+632807 { gpa4: ref, gpa3: ref, gpa2: ref, gpa1:
+3.36, ref_sub: 25913(T), 25921(T), 25931(T),
+26821(T), 27041(T), 27131(T) }
+
+632822 { gpa4: ref, gpa3: ref, gpa2: ref, gpa1: ref,
+ref_sub: 25911(T), 25912(T), 25913(T), 25921(T),
+25922(T), 26821(T), 27041(T), 29232(T),
+29241(T) }
+
+632831 { gpa4: ref, gpa3: ref, gpa2: ref, gpa1: ref,
+ref_sub: 25911(T), 25921(T), 27031(T), 27041(T),
+27131(T), 29241(T) }
+
+731467 { gpa4: ref, gpa3: ref, gpa2: 3.14, gpa1:
+2.76, ref_sub: 26833(T), 27044(T) }
+
+731476 { gpa4: ref, gpa3: ref, gpa2: 2.74, gpa1:
+ref, ref_sub: 25912(T), 26731(T), 26741(T),
+26833(T), 27044(T) }
+
+731477 { gpa4: ref, gpa3: ref, gpa2: 2.84, gpa1:
+3.05, ref_sub: 26833(T), 27044(T) }
+
+731488 { gpa4: ref, gpa3: ref, gpa2: 2.78, gpa1:
+ref, ref_sub: 25912(T), 25931(T), 26731(T),
+26833(T), 27044(T) }
+
+731489 { gpa4: ref, gpa3: ref, gpa2: 2.76, gpa1:
+2.83, ref_sub: 26741(T), 26833(T), 27044(T) }
+
+731494 { gpa4: 2.95, gpa3: ref, gpa2: 2.86, gpa1:
+2.95, ref_sub: 26833(T) }
+
+731497 { gpa4: 2.73, gpa3: ref, gpa2: ref, gpa1:
+3.14, ref_sub: 25921(T), 26721(T), 26833(T) }
+
+731519 { gpa4: ref, gpa3: 2.92, gpa2: 3.18, gpa1:
+3.17, ref_sub: 26845(T), 27044(T) }
+
+731520 { gpa4: ref, gpa3: 2.82, gpa2: 2.90, gpa1:
+2.90, ref_sub: 26741(T) }
+
+731537 { gpa4: ref, gpa3: 3.12, gpa2: ref, gpa1:
+3.14, ref_sub: 25921(T), 26742(T), 26845(T) }
+
+731541 { gpa4: 2.93, gpa3: 2.64, gpa2: ref, gpa1:
+2.83, ref_sub: 25921(T) }
+
+731544 { gpa4: 2.98, gpa3: 2.75, gpa2: ref, gpa1:
+3.12, ref_sub: 25921(T) }
+
+731546 { gpa4: 3.46, gpa3: 2.88, gpa2: 2.92,
+gpa1: ref, ref_sub: 25912(T) }
+
+731549 { gpa4: ref, gpa3: ref, gpa2: ref, gpa1: ref,
+ref_sub: 25912(T), 25921(T), 26731(T), 26845(T)
+}
+
+731552 { gpa4: ref, gpa3: 3.27, gpa2: ref, gpa1:
+3.24, ref_sub: 25921(T), 26845(T) }
+
+731558 { gpa4: ref, gpa3: 2.83, gpa2: ref, gpa1:
+3.31, ref_sub: 25921(T), 26741(T) }
+
+731559 { gpa4: 3.17, gpa3: 2.76, gpa2: ref, gpa1:
+3.00, ref_sub: 25921(T) }
+
+731573 { gpa4: ref, gpa3: 3.15, gpa2: 2.99, gpa1:
+3.33, ref_sub: 26742(T) }
+
+731601 { gpa4: 3.17, gpa3: ref, gpa2: 2.84, gpa1:
+2.93, ref_sub: 26731(T) }
+
+731608 { gpa4: ref, gpa3: 2.85, gpa2: 2.53, gpa1:
+3.05, ref_sub: 27044(T) }
+
+731612 { gpa4: 2.82, gpa3: 2.92, gpa2: ref, gpa1:
+2.74, ref_sub: 25722(T), 25921(T) }
+
+731614 { gpa4: 3.13, gpa3: ref, gpa2: 2.78, gpa1:
+3.10, ref_sub: 26731(T) }
+
+731622 { gpa4: 3.43, gpa3: ref, gpa2: 2.93, gpa1:
+3.43, ref_sub: 26731(T) }
+
+731630 { gpa4: 3.32, gpa3: 3.02, gpa2: ref, gpa1:
+2.90, ref_sub: 25921(T) }
+
+731638 { gpa4: 3.00, gpa3: 2.69, gpa2: ref, gpa1:
+3.07, ref_sub: 25921(T) }
+
+731644 { gpa4: ref, gpa3: ref, gpa2: 2.97, gpa1:
+3.12, ref_sub: 26742(T), 26833(T) }
+
+731647 { gpa4: ref, gpa3: ref, gpa2: 2.97, gpa1:
+ref, ref_sub: 25912(T), 26731(T), 26742(T) }
+
+731652 { gpa4: 3.12, gpa3: 2.63, gpa2: 2.92,
+gpa1: ref, ref_sub: 25912(T) }
+
+731656 { gpa4: ref, gpa3: ref, gpa2: ref, gpa1:
+2.90, ref_sub: 25921(T), 26731(T), 26742(T),
+27044(T) }
+
+731657 { gpa4: ref, gpa3: 3.06, gpa2: 3.01, gpa1:
+3.26, ref_sub: 26742(T) }
+
+731665 { gpa4: ref, gpa3: ref, gpa2: ref, gpa1: ref,
+ref_sub: 25913(T), 25921(T), 25931(T), 26711(T),
+26832(T), 26843(T) }
+
+731670 { gpa4: ref, gpa3: 2.91, gpa2: 2.80, gpa1:
+2.70, ref_sub: 26841(T), 26843(T) }
+
+731673 { gpa4: ref, gpa3: 3.23, gpa2: ref, gpa1:
+2.67, ref_sub: 25913(T), 25921(T), 26742(T) }
+
+731675 { gpa4: ref, gpa3: 3.49, gpa2: ref, gpa1:
+ref, ref_sub: 25911(T), 25921(T), 26843(T) }
+
+731679 { gpa4: ref, gpa3: ref, gpa2: 2.87, gpa1:
+ref, ref_sub: 25911(T), 26742(T), 26831(T),
+26843(T) }
+
+731683 { gpa4: ref, gpa3: 2.93, gpa2: ref, gpa1:
+ref, ref_sub: 25912(T), 25921(T), 26741(T) }
+
+731705 { gpa4: ref, gpa3: 3.46, gpa2: 2.93, gpa1:
+ref, ref_sub: 26711(T), 26741(T), 26843(T) }
+
+731710 { gpa4: ref, gpa3: 2.86, gpa2: 2.80, gpa1:
+2.74, ref_sub: 26741(T), 26742(T), 26843(T) }
+
+731714 { gpa4: ref, gpa3: 3.39, gpa2: 2.89, gpa1:
+2.96, ref_sub: 26741(T) }
+
+731718 { gpa4: ref, gpa3: 3.14, gpa2: ref, gpa1:
+2.73, ref_sub: 25921(T), 26741(T), 26842(T),
+26843(T) }
+
+731722 { gpa4: ref, gpa3: 3.01, gpa2: ref, gpa1:
+2.92, ref_sub: 25921(T), 26741(T) }
+
+731724 { gpa4: ref, gpa3: 2.86, gpa2: ref, gpa1:
+ref, ref_sub: 25912(T), 25913(T), 25921(T),
+26741(T), 26843(T) }
+
+731726 { gpa4: ref, gpa3: 3.09, gpa2: ref, gpa1:
+2.77, ref_sub: 25921(T), 26742(T) }
+
+731729 { gpa4: ref, gpa3: 2.93, gpa2: ref, gpa1:
+2.77, ref_sub: 25921(T), 26741(T), 26742(T) }
+
+731730 { gpa4: 3.36, gpa3: 2.93, gpa2: ref, gpa1:
+2.90, ref_sub: 25921(T) }
+
+731738 { gpa4: ref, gpa3: ref, gpa2: ref, gpa1:
+2.74, ref_sub: 25913(T), 26741(T), 26742(T),
+26821(T), 26832(T) }
+
+731739 { gpa4: ref, gpa3: 2.91, gpa2: ref, gpa1:
+ref, ref_sub: 25911(T), 25921(T), 26742(T) }
+
+731742 { gpa4: ref, gpa3: ref, gpa2: ref, gpa1: ref,
+ref_sub: 25912(T), 25913(T), 25921(T), 26711(T),
+26731(T), 26741(T), 26742(T), 26832(T) }
+
+731759 { gpa4: ref, gpa3: 2.66, gpa2: ref, gpa1:
+2.49, ref_sub: 25921(T), 26741(T), 26821(T) }
+
+731763 { gpa4: ref, gpa3: 2.78, gpa2: 2.85, gpa1:
+2.93, ref_sub: 26741(T) }
+
+731764 { gpa4: ref, gpa3: 2.76, gpa2: 2.63, gpa1:
+2.36, ref_sub: 26741(T), 26742(T) }
+
+731770 { gpa4: ref, gpa3: 2.84, gpa2: 2.85, gpa1:
+2.71, ref_sub: 26741(T), 26742(T) }
+
+731771 { gpa4: ref, gpa3: 2.80, gpa2: 2.80, gpa1:
+2.68, ref_sub: 26741(T), 26742(T) }
+
+731772 { gpa4: ref, gpa3: 3.23, gpa2: 3.15, gpa1:
+2.96, ref_sub: 26741(T), 26742(T) }
+
+731774 { gpa4: ref, gpa3: 3.04, gpa2: 3.15, gpa1:
+3.32, ref_sub: 26741(T) }
+
+731775 { gpa4: ref, gpa3: ref, gpa2: 2.76, gpa1:
+2.87, ref_sub: 25922(T), 26741(T) }
+
+731778 { gpa4: ref, gpa3: 2.88, gpa2: 3.30, gpa1:
+2.92, ref_sub: 26742(T) }
+
+731782 { gpa4: ref, gpa3: 2.90, gpa2: 3.02, gpa1:
+3.00, ref_sub: 26741(T) }
+
+731785 { gpa4: ref, gpa3: ref, gpa2: 3.09, gpa1:
