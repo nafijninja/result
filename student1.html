@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Result</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="firebase-config.js"></script>
+  <style>
+    .student-container {
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+      text-align: center;
+      border-radius: 10px;
+      border: 3px solid gray;
+      transition: background-color 0.3s ease; /* Smooth transition for background color */
+    }
+
+    .pass {
+      border-color: green;
+      background-color: #d4edda; /* Light green background */
+    }
+
+    .fail {
+      border-color: red;
+      background-color: #f8d7da; /* Light red background */
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #gpaList {
+      max-height: 200px;
+      overflow-y: auto;
+      padding-left: 0;
+      list-style-type: none;
+    }
+
+    #referredSubjects {
+      text-align: left;
+      padding: 10px;
+      margin-top: 10px;
+      white-space: nowrap;
+      overflow-x: auto;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 10px;
+      max-width: 100%;
+      justify-content: flex-start;
+    }
+
+    .student-status {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    #cgpa {
+      font-weight: bold;
+      margin-top: 10px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="student-container" id="resultBox">
+    <h2>Diploma Result Checker</h2>
+    <input type="text" id="rollNumber" placeholder="Enter Roll Number">
+    <button id="checkResult">Check Result</button>
+
+    <div id="resultDisplay" class="hidden">
+      <div class="student-status" id="studentStatus"></div>
+      <p><strong>Roll Number:</strong> <span id="studentRoll"></span></p>
+      <div id="cgpa"></div> <!-- Added section for CGPA -->
+      <ul id="gpaList"></ul>
+      <div id="referredSubjects"><strong>Referred Subjects:</strong> <span id="referredText"></span></div>
+    </div>
+
+    <p id="errorMessage"></p>
+  </div>
+
+  <script type="module">
+    import { db } from "./firebase-config.js";
+    import { ref, get, child } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
+
+    document.getElementById("checkResult").addEventListener("click", async () => {
+      let roll = document.getElementById("rollNumber").value.trim();
+      let resultDisplay = document.getElementById("resultDisplay");
+      let errorMessage = document.getElementById("errorMessage");
+      let gpaList = document.getElementById("gpaList");
+      let referredSubjects = document.getElementById("referredSubjects");
+      let resultBox = document.getElementById("resultBox");
+      let studentStatus = document.getElementById("studentStatus");
+      let referredText = document.getElementById("referredText");
+      let cgpaElement = document.getElementById("cgpa");
+
+      // Clear previous results and errors
+      errorMessage.innerText = "";
+      gpaList.innerHTML = "";
+      referredText.innerText = "";
+      studentStatus.innerText = "";
+      cgpaElement.innerText = "";
+
+      if (!roll) {
+        errorMessage.innerText = "❌ Please enter a roll number!";
+        return;
+      }
+
+      // Get result data from the database
+      let snapshot = await get(child(ref(db), "results/" + roll));
+      if (snapshot.exists()) {
+        let data = snapshot.val();
+        document.getElementById("studentRoll").innerText = roll;
+
+        // Display GPA for each semester
+        if (data.gpa) {
+          Object.keys(data.gpa).forEach(semester => {
+            gpaList.innerHTML += `<li><strong>${semester}:</strong> ${data.gpa[semester]}</li>`;
+          });
+        }
+
+        // Calculate and display CGPA
+        if (data.cgpa) {
+          cgpaElement.innerText = `CGPA: ${data.cgpa}`;
+        } else {
+          cgpaElement.innerText = "CGPA: Not Published Yet";
+        }
+
+        // Handle referred subjects
+        if (data.referred && data.referred.length > 0 && data.referred[0] !== "None" && data.referred[0] !== "pass" && data.referred[0] !== "passed") {
+          let referredArray = data.referred; // This is an array like ["101", "202"]
+
+          // Display referred subjects with their semester
+          referredArray.forEach((subject, index) => {
+            referredText.innerHTML += `<div><strong>${index + 1}st:</strong> ${subject}</div>`;
+          });
+
+          resultBox.classList.remove("pass"); // Remove green border
+          resultBox.classList.add("fail"); // Add red border for failed student
+          studentStatus.innerText = "Student Status: Failed";
+        } else {
+          // No referred subjects or referred is "None"
+          referredText.innerText = "None";  // This will show "None"
+          resultBox.classList.remove("fail"); // Remove red border
+          resultBox.classList.add("pass"); // Add green border for passed student
+          studentStatus.innerText = "Student Status: Passed";
+        }
+
+        resultDisplay.classList.remove("hidden");
+      } else {
+        errorMessage.innerText = "❌ Result not found!";
+        resultDisplay.classList.add("hidden");
+      }
+    });
+  </script>
+</body>
+
+</html>
