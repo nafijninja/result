@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result Formatter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .output {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-family: monospace;
+            font-size: 16px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Result Formatter</h1>
+
+        <!-- Input Section -->
+        <div class="section">
+            <h2>Enter Original Results</h2>
+            <textarea id="inputResult" placeholder="Enter your results here..."></textarea>
+        </div>
+
+        <!-- Convert Button -->
+        <div class="section">
+            <button onclick="formatResult()">Convert Result</button>
+        </div>
+
+        <!-- Output Section -->
+        <div class="section">
+            <h2>Formatted Result</h2>
+            <div id="outputResult" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        function formatResult() {
+            const inputText = document.getElementById("inputResult").value.trim();
+            const outputElement = document.getElementById("outputResult");
+
+            // Clear the output first
+            outputElement.textContent = "";
+
+            console.log("Input Text:", inputText); // Debugging input text
+
+            // Regular expression to match student ID, GPAs, and referred subjects
+            const regex = /(\d+)\s*\{([^}]*)ref_sub:\s*([0-9(),T\s]+)\s*\}/g;
+
+            let matches;
+            let found = false; // Track if we found any valid data
+
+            while ((matches = regex.exec(inputText)) !== null) {
+                console.log("Match found:", matches); // Debugging the match
+
+                found = true; // Valid data found
+
+                const studentId = matches[1];
+                const gpaData = matches[2].trim(); // Extract only the GPA data
+                const refSub = matches[3];
+
+                // GPA map (default values as "Not Published Yet")
+                let gpas = {
+                    gpa1: "Not Published Yet",
+                    gpa2: "Not Published Yet",
+                    gpa3: "Not Published Yet",
+                    gpa4: "Not Published Yet",
+                    gpa5: "Not Published Yet",
+                    gpa6: "Not Published Yet",
+                    gpa7: "Not Published Yet",
+                    gpa8: "Not Published Yet"
+                };
+
+                // Extract GPA values from input
+                const gpaRegex = /gpa(\d):\s*(ref|\d+\.\d*)/g;
+                let gpaMatch;
+                while ((gpaMatch = gpaRegex.exec(gpaData)) !== null) {
+                    let index = `gpa${gpaMatch[1]}`;
+                    gpas[index] = gpaMatch[2]; // Keep "ref" or the actual GPA
+                }
+
+                // Construct formatted GPA list (1st to 8th)
+                const formattedGPA = Object.keys(gpas)
+                    .sort((a, b) => a.replace("gpa", "") - b.replace("gpa", "")) // Ensure ordering
+                    .map((key, index) => `${index + 1}st: ${gpas[key]}`)
+                    .join(", ");
+
+                // Handle Referred Subjects List for multiple subjects
+                const referredSubjects = refSub.split(",").map(ref => ref.trim()).join(", ");
+                const referredText = referredSubjects ? `[Referred: ${referredSubjects}]` : "[Referred: None]";
+
+                // Construct the formatted result
+                const formattedResult = `${studentId} (${formattedGPA}) ${referredText}`;
+
+                // Append formatted result to the output
+                outputElement.textContent += formattedResult + "\n";
+            }
+
+            // If no results matched, show an error
+            if (!found) {
+                outputElement.textContent = "No valid results found. Please check the input format.";
+            }
+        }
+    </script>
+
+</body>
+</html>
