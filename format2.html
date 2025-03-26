@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result Formatter</title>
+    <title>Result Formatter [passed with cgpa or without cgpa]</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -65,6 +65,10 @@
             font-size: 16px;
             white-space: pre-wrap;
         }
+
+        #copyButton {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -87,6 +91,7 @@
         <div class="section">
             <h2>Formatted Result</h2>
             <div id="outputResult" class="output"></div>
+            <button id="copyButton" onclick="copyToClipboard()">Copy to Clipboard</button>
         </div>
     </div>
 
@@ -169,6 +174,22 @@
 
             // Join all formatted results with a new line
             outputElement.textContent = formattedResults.join("\n");
+        }
+
+        // Function to copy the result to clipboard
+        function copyToClipboard() {
+            const outputText = document.getElementById("outputResult").textContent;
+            if (outputText) {
+                navigator.clipboard.writeText(outputText)
+                    .then(() => {
+                        alert("Result copied to clipboard!");
+                    })
+                    .catch(err => {
+                        alert("Failed to copy text: " + err);
+                    });
+            } else {
+                alert("No result to copy!");
+            }
         }
     </script>
 
