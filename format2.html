@@ -98,8 +98,13 @@
             // Clear the output first
             outputElement.textContent = "";
 
-            // Split the input into individual student records (one per line)
-            const studentRecords = inputText.split(/\n+/).map(record => record.trim()).filter(record => record);
+            // Remove all line breaks and extra spaces within the input
+            const cleanedInput = inputText.replace(/\s*\n\s*/g, " ");  // Replaces line breaks with a single space
+
+            console.log("Cleaned Input:", cleanedInput);  // Debugging cleaned input
+
+            // Split the input into individual student records based on student ID (assuming format like 501XXX)
+            const studentRecords = cleanedInput.split(/(?=\d{6})/).map(record => record.trim()).filter(record => record);
 
             if (studentRecords.length === 0) {
                 outputElement.textContent = "No valid results found. Please check the input format.";
