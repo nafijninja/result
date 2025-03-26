@@ -11,7 +11,7 @@
 
 <body>
   <div class="admin-container">
-    <h2>Welcome, Admin [passed with cgpa or without cgpa] </h2>
+    <h2>Welcome, Admin</h2>
     <button id="logout">Logout</button>
 
     <h3>Upload Results</h3>
@@ -55,9 +55,9 @@
       let results = {};
       let lines = inputText.split("\n");
 
-      // ✅ Updated Regex to handle long lists of referred subjects and CGPA
-      let validPattern = /^(\d{6})\s*cgpa:\s*([\d.]+|NOT PUBLISHED YET)\s*\(([^)]+)\)\s*\[Referred:\s*([^\]]*)\]?\s*$/;
-      // Matches: "123456 cgpa: 3.5 (1st: 3.5, 2nd: 3.8) [Referred: 101, 202, 303]"
+      // ✅ Updated Regex to match the new format, including CGPA and semester info
+      let validPattern = /^(\d{6})\s*\(CGPA:\s*([\d.]+|Not Published Yet)\)\s*\(([^)]+)\)\s*(?:\[Referred:\s*([^\]]*)\])?/;
+      // Matches: "519267 (CGPA: 3.32) (1st: Not Published Yet, 2st: Not Published Yet, 3st: Not Published Yet, 4st: 3.01, 5st: 3.14, 6st: 3.16, 7st: 3.08, 8st: 4.00) [Referred: None]"
 
       lines.forEach(line => {
         let match = line.match(validPattern);
@@ -66,14 +66,14 @@
           let gpaData = {};
           let semesterCount = 0; // Count semesters
 
-          let cgpa = match[2].trim(); // Extract CGPA (could be a number or "NOT PUBLISHED YET")
-          let gpaEntries = match[3].split(","); // "1st: 3.5, 2nd: 3.8"
+          let cgpa = match[2].trim(); // Extract CGPA (could be a number or "Not Published Yet")
+          let gpaEntries = match[3].split(","); // "1st: Not Published Yet, 2nd: Not Published Yet"
           gpaEntries.forEach(entry => {
             if (semesterCount < 8) { // ✅ Max 8 semesters allowed
               let [key, value] = entry.split(":").map(str => str.trim());
               if (key && value) {
-                if (value.toLowerCase() === "ref") {
-                  gpaData[key] = "Referred"; // Mark as referred
+                if (value.toLowerCase() === "not published yet") {
+                  gpaData[key] = "Not Published Yet"; // Mark as "Not Published Yet"
                 } else if (!isNaN(value)) {
                   gpaData[key] = parseFloat(value); // Store GPA if it's a valid number
                 }
@@ -86,9 +86,9 @@
           referredSubjects = referredSubjects.split(",").map(subject => subject.trim()); // Convert to array
 
           // ✅ Only add valid GPA data
-          if (Object.keys(gpaData).length > 0 || referredSubjects.length > 0 || cgpa === "NOT PUBLISHED YET") {
+          if (Object.keys(gpaData).length > 0 || referredSubjects.length > 0 || cgpa === "Not Published Yet") {
             results[roll] = {
-              cgpa: cgpa, // Store CGPA value as it is (could be number or "NOT PUBLISHED YET")
+              cgpa: cgpa, // Store CGPA value as it is (could be number or "Not Published Yet")
               gpa: gpaData,
               referred: referredSubjects // Store referred subjects as an array
             };
