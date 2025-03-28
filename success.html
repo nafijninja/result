@@ -14,55 +14,109 @@
       background-color: #f4f4f4;
       text-align: center;
       font-family: Arial, sans-serif;
+      animation: fadeInBg 1.5s ease-in-out;
     }
 
     .success-container {
       background: white;
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-      animation: fadeIn 1s ease-in-out;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+      animation: zoomIn 1s ease-in-out, fadeIn 1s ease-in-out;
     }
 
     img {
       width: 100px;
       margin-bottom: 20px;
+      animation: bounce 1.5s infinite alternate ease-in-out;
     }
 
     h2 {
       color: #2ecc71;
       font-size: 24px;
+      animation: slideIn 1s ease-in-out;
     }
 
     p {
       font-size: 18px;
       color: #555;
+      animation: fadeIn 1.5s ease-in-out;
     }
 
     .back-btn {
       display: inline-block;
       margin-top: 20px;
-      padding: 10px 20px;
+      padding: 12px 25px;
       background: #2ecc71;
       color: white;
       text-decoration: none;
       border-radius: 5px;
       transition: 0.3s;
+      font-weight: bold;
+      animation: fadeIn 2s ease-in-out;
     }
 
     .back-btn:hover {
       background: #27ae60;
+      transform: scale(1.1);
     }
 
+    .author {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      opacity: 0;
+      animation: fadeIn 2.5s ease-in-out forwards;
+    }
+
+    /* Animations */
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(-20px);
       }
-
       to {
         opacity: 1;
+      }
+    }
+
+    @keyframes fadeInBg {
+      from {
+        background-color: #e0e0e0;
+      }
+      to {
+        background-color: #f4f4f4;
+      }
+    }
+
+    @keyframes zoomIn {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+      to {
         transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-10px);
       }
     }
   </style>
@@ -74,6 +128,7 @@
     <h2>Form Submitted Successfully!</h2>
     <p>Thank you for reaching out. We will get back to you soon.</p>
     <a href="index.html" class="back-btn">Go Back to Home</a>
+    <div class="author">Designed by NAFIJ RAHAMAN</div>
   </div>
 </body>
 
