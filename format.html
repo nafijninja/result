@@ -124,14 +124,14 @@
                 const studentRegex = /(\d+)\s*(?:cgpa:\s*(\d+\.\d+|\s*NOT PUBLISHED YET))?\s*\((.*)\)/;
 
                 const studentMatch = studentRegex.exec(record);
-                if (!studentMatch) {
-                    formattedResults.push(`Invalid format for record: ${record}`);
-                    return;
-                }
+           if (!studentMatch) {
+    return; // ✅ Skip adding invalid records
+}
+
 
                 // Extracted data
                 const studentId = studentMatch[1];
-                const cgpa = studentMatch[2] ? studentMatch[2] : "Not Published Yet"; // Default to "NOT PUBLISHED YET" if CGPA is missing
+                const cgpa = studentMatch[2] ? studentMatch[2] : "Not Published Yet"; // Default to "Not Published Yet" if CGPA is missing
                 const gpaData = studentMatch[3].trim(); // GPA data inside parentheses
                 const refSubMatch = /ref_sub:\s*([0-9(),T\s]+)/.exec(gpaData);
                 const refSub = refSubMatch ? refSubMatch[1] : "None"; // Extract referred subjects if present
