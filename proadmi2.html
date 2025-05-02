@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="firebase-config.js"></script>
+    <style>
+        .terminal {
+            background-color: #222;
+            color: #00ff00;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            height: 200px;
+            overflow-y: scroll;
+        }
+
+        .upload-section {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .upload-section textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+
+        .upload-progress-container {
+            margin-bottom: 5px;
+        }
+
+        .upload-progress {
+            width: 100%;
+        }
+
+        .upload-status {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <h2>Welcome, Admin [passed with cgpa or without cgpa]</h2>
+        <button id="logout">Logout</button>
+
+        <h3>Upload Results in Smaller Batches</h3>
+
+        <div id="terminal" class="terminal"></div>
+
+        <div class="upload-section">
+            <textarea id="resultInput1" placeholder="Paste results batch 1 here..."></textarea>
+            <div class="upload-progress-container">
+                <button class="uploadButton" data-input-id="resultInput1">Upload Batch 1</button>
+                <progress id="progressBar1" class="upload-progress" value="0" max="100"></progress>
+                <p id="status1" class="upload-status"></p>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <textarea id="resultInput2" placeholder="Paste results batch 2 here..."></textarea>
+            <div class="upload-progress-container">
+                <button class="uploadButton" data-input-id="resultInput2">Upload Batch 2</button>
+                <progress id="progressBar2" class="upload-progress" value="0" max="100"></progress>
+                <p id="status2" class="upload-status"></p>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <textarea id="resultInput3" placeholder="Paste results batch 3 here..."></textarea>
+            <div class="upload-progress-container">
+                <button class="uploadButton" data-input-id="resultInput3">Upload Batch 3</button>
+                <progress id="progressBar3" class="upload-progress" value="0" max="100"></progress>
+                <p id="status3" class="upload-status"></p>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <textarea id="resultInput4" placeholder="Paste results batch 4 here..."></textarea>
+            <div class="upload-progress-container">
+                <button class="uploadButton" data-input-id="resultInput4">Upload Batch 4</button>
+                <progress id="progressBar4" class="upload-progress" value="0" max="100"></progress>
+                <p id="status4" class="upload-status"></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from "./firebase-config.js";
+        import { ref, update } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+
+        // ✅ Redirect if not logged in
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "admin-login.html";
+            }
+        });
+
+        // ✅ Logout functionality
+        document.getElementById("logout").addEventListener("click", () => {
+            signOut(auth).then(() => {
+                window.location.href = "admin-login.html";
+            }).catch(error => {
+                console.error("❌ Logout Error:", error);
+            });
+        });
+
+        const terminal = document.getElementById("terminal");
+        const uploadButtons = document.querySelectorAll(".uploadButton");
+        const progressBars = {
+            resultInput1: document.getElementById("progressBar1"),
+            resultInput2: document.getElementById("progressBar2"),
+            resultInput3: document.getElementById("progressBar3"),
+            resultInput4: document.getElementById("progressBar4"),
+        };
+        const statusMessages = {
+            resultInput1: document.getElementById("status1"),
+            resultInput2: document.getElementById("status2"),
+            resultInput3: document.getElementById("status3"),
+            resultInput4: document.getElementById("status4"),
+        };
+
+        function logToTerminal(message) {
+            terminal.innerHTML += `<span style="color: #00ff00;">> </span>${message}<br>`;
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        async function uploadBatch(inputId) {
+            const inputText = document.getElementById(inputId).value.trim();
+            const statusMsg = statusMessages[inputId];
+            const progressBar = progressBars[inputId];
+            statusMsg.innerText = "";
+            progressBar.value = 0;
+
+            if (!inputText) {
+                alert(`❌ Please paste results for ${inputId}!`);
+                return;
+            }
+
+            const lines = inputText.split("\n");
+            const totalLines = lines.length;
+            const batchSize = 100; // ব্যাচের সাইজ ১০০ করা হলো
+            const results = {};
+            let validCount = 0;
+            let invalidCount = 0;
+
+            const validPattern = /^(\d{6})\s*\(CGPA:\s*([\d.]+|Not Published Yet)\)\s*\(([^)]+)\)\s*(?:\[Referred:\s*([^\]]*)\])?/;
+
+            for (const line of lines) {
+                const match = line.match(validPattern);
+                if (match) {
+                    const roll = match[1].trim();
+                    const cgpa = match[2].trim();
+                    const gpaData = {};
+                    let semesterCount = 0;
+                    const gpaEntries = match[3].split(",");
+                    gpaEntries.forEach(entry => {
+                        if (semesterCount < 8) {
+                            const [key, value] = entry.split(":").map(str => str.trim());
+                            if (key && value) {
+                                if (value.toLowerCase() === "not published yet") {
+                                    gpaData[key] = "Not Published Yet";
+                                } else if (!isNaN(value)) {
+                                    gpaData[key] = parseFloat(value);
+                                }
+                                semesterCount++;
+                            }
+                        }
+                    });
+                    const referredSubjects = match[4] ? match[4].trim().split(",").map(s => s.trim()) : [];
+
+                    if (Object.keys(gpaData).length > 0 || referredSubjects.length > 0 || cgpa === "Not Published Yet") {
+                        results[roll] = { cgpa: cgpa, gpa: gpaData, referred: referredSubjects };
+                        validCount++;
+                    } else {
+                        invalidCount++;
+                        logToTerminal(`⚠️ Invalid data format: ${line.substring(0, 100)}...`);
+                    }
+                } else {
+                    invalidCount++;
+                    logToTerminal(`⚠️ Invalid line format: ${line.substring(0, 100)}...`);
+                }
+            }
+
+            progressBar.max = validCount;
+            let uploadedCount = 0;
+            let failedUploads = 0;
+            const allUploads = [];
+
+            const rollNumbers = Object.keys(results);
+            for (let i = 0; i < rollNumbers.length; i += batchSize) {
+                const batch = rollNumbers.slice(i, i + batchSize);
+                const updates = {};
+                for (const roll of batch) {
+                    updates[`results/${roll}`] = results[roll];
+                }
+
+                const uploadPromise = update(ref(db), updates)
+                    .then(() => {
+                        uploadedCount += batch.length;
+                        progressBar.value = uploadedCount;
+                        logToTerminal(`✅ Batch ${Math.ceil((i / batchSize) + 1)} (${batch.length} records) uploaded successfully.`);
+                        return new Promise(resolve => setTimeout(resolve, 1000)); // প্রতিটি ব্যাচের পর ১ সেকেন্ড ডিলে
+                    })
+                    .catch(error => {
+                        failedUploads += batch.length;
+                        console.error(`❌ Batch ${Math.ceil((i / batchSize) + 1)} upload failed:`, error);
+                        logToTerminal(`🔥 Batch ${Math.ceil((i / batchSize) + 1)} (${batch.length} records) failed: ${error.message}`);
+                    });
+                allUploads.push(uploadPromise);
+            }
+
+            await Promise.all(allUploads);
+            statusMsg.innerText = `⬆️ Uploaded: ${uploadedCount}, Failed: ${failedUploads} out of ${validCount} valid records.`;
+            document.getElementById(inputId).value = ""; // Clear textarea
+            logToTerminal(`🏁 Finished uploading ${inputId}. Total valid: ${validCount}, Uploaded: ${uploadedCount}, Failed: ${failedUploads}, Invalid format: ${invalidCount}.`);
+        }
+
+        uploadButtons.forEach(button => {
+            button.addEventListener("click", async (event) => {
+                const inputId = event.target.dataset.inputId;
+                await uploadBatch(inputId);
+            });
+        });
+    </script>
+</body>
+
+</html>
