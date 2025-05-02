@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="firebase-config.js"></script>
+    <style>
+        .terminal {
+            background-color: #222;
+            color: #00ff00;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            height: 200px;
+            overflow-y: scroll;
+        }
+
+        .upload-section {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .upload-section textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+
+        .upload-progress {
+            font-size: 12px;
+            color: #555;
+        }
+
+        .validation-error {
+            color: red;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <h2>Welcome, Admin</h2>
+        <button id="logout">Logout</button>
+
+        <h3>Upload Results</h3>
+
+        <div id="terminal" class="terminal"></div>
+
+        <div class="upload-section">
+            <textarea id="resultInput1" placeholder="Paste results here..."></textarea>
+            <button class="uploadButton" data-input-id="resultInput1">Upload Batch 1</button>
+            <p class="upload-progress" id="progress1"></p>
+            <p class="validation-error" id="validationError1"></p>
+        </div>
+
+        <div class="upload-section">
+            <textarea id="resultInput2" placeholder="Paste results here..."></textarea>
+            <button class="uploadButton" data-input-id="resultInput2">Upload Batch 2</button>
+            <p class="upload-progress" id="progress2"></p>
+            <p class="validation-error" id="validationError2"></p>
+        </div>
+
+        <div class="upload-section">
+            <textarea id="resultInput3" placeholder="Paste results here..."></textarea>
+            <button class="uploadButton" data-input-id="resultInput3">Upload Batch 3</button>
+            <p class="upload-progress" id="progress3"></p>
+            <p class="validation-error" id="validationError3"></p>
+        </div>
+
+        <div class="upload-section">
+            <textarea id="resultInput4" placeholder="Paste results here..."></textarea>
+            <button class="uploadButton" data-input-id="resultInput4">Upload Batch 4</button>
+            <p class="upload-progress" id="progress4"></p>
+            <p class="validation-error" id="validationError4"></p>
+        </div>
+
+        <p id="overallStatus"></p>
+    </div>
+
+    <script type="module">
+        import { auth, db } from "./firebase-config.js";
+        import { ref, update } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+
+        // ✅ Redirect if not logged in
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "admin-login.html";
+            }
+        });
+
+        // ✅ Logout functionality
+        document.getElementById("logout").addEventListener("click", () => {
+            signOut(auth).then(() => {
+                window.location.href = "admin-login.html";
+            }).catch(error => {
+                console.error("❌ Logout Error:", error);
+            });
+        });
+
+        const terminal = document.getElementById("terminal");
+        const overallStatus = document.getElementById("overallStatus");
+        const uploadButtons = document.querySelectorAll(".uploadButton");
+        const progressBars = {
+            resultInput1: document.getElementById("progress1"),
+            resultInput2: document.getElementById("progress2"),
+            resultInput3: document.getElementById("progress3"),
+            resultInput4: document.getElementById("progress4"),
+        };
+        const validationErrors = {
+            resultInput1: document.getElementById("validationError1"),
+            resultInput2: document.getElementById("validationError2"),
+            resultInput3: document.getElementById("validationError3"),
+            resultInput4: document.getElementById("validationError4"),
+        };
+
+        function logToTerminal(message) {
+            terminal.innerHTML += `<span style="color: #00ff00;">> </span>${message}<br>`;
+            terminal.scrollTop = terminal.scrollHeight; // Auto-scroll to bottom
+        }
+
+        function validateLine(line) {
+            const validPattern = /^(\d{6})\s*\(([^)]+)\)\s*\[Referred:\s*([^\]]*)\]?\s*$/;
+            const match = line.match(validPattern);
+            if (!match) {
+                return "❌ Invalid format";
+            }
+
+            const gpaPart = match[2];
+            const gpaEntries = gpaPart.split(",");
+            if (gpaEntries.length > 8) {
+                return "❌ More than 8 semesters";
+            }
+            for (const entry of gpaEntries) {
+                const [key, value] = entry.split(":").map(str => str.trim());
+                if (key && value) {
+                    if (key.toLowerCase().startsWith("st") && isNaN(value) && value.toLowerCase() !== "ref" && value.toLowerCase() !== "not published yet") {
+                        return `❌ Invalid GPA value: ${value} in ${key}`;
+                    }
+                }
+            }
+            return null; // Line is valid
+        }
+
+        async function uploadResults(inputId) {
+            const inputText = document.getElementById(inputId).value.trim();
+            const progressBar = progressBars[inputId];
+            const validationError = validationErrors[inputId];
+            progressBar.innerText = "Processing...";
+            validationError.innerText = "";
+
+            if (!inputText) {
+                alert(`❌ Please paste results in ${inputId}!`);
+                progressBar.innerText = "❌ Empty";
+                return;
+            }
+
+            const lines = inputText.split("\n");
+            const totalLines = lines.length;
+            let uploadedCount = 0;
+            let failedCount = 0;
+            const batchSize = 100;
+            const updates = {};
+            const invalidLines = [];
+
+            // Data Validation
+            for (const line of lines) {
+                const error = validateLine(line);
+                if (error) {
+                    invalidLines.push(`${line} - ${error}`);
+                }
+            }
+
+            if (invalidLines.length > 0) {
+                validationError.innerText = `⚠️ Found ${invalidLines.length} invalid lines. Check terminal.`;
+                for (const error of invalidLines) {
+                    logToTerminal(`⚠️ Validation Error (${inputId}): ${error}`);
+                }
+                progressBar.innerText = `⚠️ Validation Errors`;
+                return;
+            }
+
+            logToTerminal(`✅ Validation successful for ${inputId}. Uploading ${totalLines} records...`);
+
+            for (let i = 0; i < totalLines; i += batchSize) {
+                const batchLines = lines.slice(i, i + batchSize);
+                const batchUpdates = {};
+
+                for (const line of batchLines) {
+                    const validPattern = /^(\d{6})\s*\(([^)]+)\)\s*\[Referred:\s*([^\]]*)\]?\s*$/;
+                    const match = line.match(validPattern);
+                    if (match) {
+                        const roll = match[1].trim();
+                        const gpaData = {};
+                        let semesterCount = 0;
+                        const gpaEntries = match[2].split(",");
+                        gpaEntries.forEach(entry => {
+                            if (semesterCount < 8) {
+                                const [key, value] = entry.split(":").map(str => str.trim());
+                                if (key && value) {
+                                    if (value.toLowerCase() === "ref") {
+                                        gpaData[key] = "Referred";
+                                    } else if (!isNaN(value)) {
+                                        gpaData[key] = parseFloat(value);
+                                    } else if (value.toLowerCase() === "not published yet") {
+                                        gpaData[key] = "Not Published Yet";
+                                    }
+                                    semesterCount++;
+                                }
+                            }
+                        });
+                        const referredSubjects = match[3] ? match[3].trim().split(",").map(subject => subject.trim()) : [];
+                        if (Object.keys(gpaData).length > 0 || referredSubjects.length > 0) {
+                            batchUpdates[`results/${roll}`] = { gpa: gpaData, referred: referredSubjects };
+                        }
+                    }
+                }
+
+                if (Object.keys(batchUpdates).length > 0) {
+                    try {
+                        await update(ref(db), batchUpdates);
+                        uploadedCount += Object.keys(batchUpdates).length;
+                        logToTerminal(`💾 Uploaded batch for ${inputId}: ${Object.keys(batchUpdates).length} records (${uploadedCount}/${totalLines})`);
+                        progressBar.innerText = `⬆️ Uploaded: ${uploadedCount}/${totalLines}`;
+                    } catch (error) {
+                        console.error(`❌ Firebase Upload Error (${inputId}):`, error);
+                        logToTerminal(`🔥 Error uploading batch for ${inputId}: ${error}`);
+                        progressBar.innerText = `🔥 Error`;
+                        failedCount += Object.keys(batchUpdates).length;
+                        overallStatus.innerText = `⚠️ Uploads in progress. ${failedCount} errors so far. Check terminal.`;
+                        // Optionally, you might want to stop further uploads for this textarea on error
+                    }
+                } else if (batchLines.length > 0) {
+                    logToTerminal(`💨 No valid results in batch for ${inputId} (${uploadedCount}/${totalLines})`);
+                }
+            }
+
+            logToTerminal(`✅ Finished uploading for ${inputId}: ${uploadedCount} successful, ${failedCount} failed.`);
+            progressBar.innerText = `✅ Success: ${uploadedCount}, ❌ Failed: ${failedCount}`;
+            const allFinished = Array.from(uploadButtons).every(button => button.disabled);
+            if (allFinished) {
+                overallStatus.innerText = `✅ All initiated uploads completed. Success: ${uploadedCount}, Failed: ${failedCount}. Check terminal for details.`;
+            }
+            document.getElementById(inputId).value = ""; // Clear textarea after upload attempt
+        }
+
+        uploadButtons.forEach(button => {
+            button.addEventListener("click", async (event) => {
+                const inputId = event.target.dataset.inputId;
+                button.disabled = true; // Disable the button during upload
+                progressBars[inputId].innerText = "⏳ Pending...";
+                validationErrors[inputId].innerText = "";
+                await uploadResults(inputId);
+                button.disabled = false; // Enable the button after upload attempt
+            });
+        });
+    </script>
+</body>
+
+</html>
