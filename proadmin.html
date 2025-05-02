@@ -15,7 +15,7 @@
             margin-bottom: 15px;
             font-family: monospace;
             font-size: 14px;
-            height: 200px;
+            height: 250px;
             overflow-y: scroll;
         }
 
@@ -129,19 +129,19 @@
             const validPattern = /^(\d{6})\s*\(([^)]+)\)\s*\[Referred:\s*([^\]]*)\]?\s*$/;
             const match = line.match(validPattern);
             if (!match) {
-                return "❌ Invalid format";
+                return "❌ Invalid Format";
             }
 
             const gpaPart = match[2];
             const gpaEntries = gpaPart.split(",");
             if (gpaEntries.length > 8) {
-                return "❌ More than 8 semesters";
+                return "❌ More than 8 Semesters";
             }
             for (const entry of gpaEntries) {
                 const [key, value] = entry.split(":").map(str => str.trim());
                 if (key && value) {
                     if (key.toLowerCase().startsWith("st") && isNaN(value) && value.toLowerCase() !== "ref" && value.toLowerCase() !== "not published yet") {
-                        return `❌ Invalid GPA value: ${value} in ${key}`;
+                        return `❌ Invalid GPA Value: ${value} in ${key}`;
                     }
                 }
             }
@@ -165,15 +165,14 @@
             const totalLines = lines.length;
             let uploadedCount = 0;
             let failedCount = 0;
-            const batchSize = 100;
             const updates = {};
             const invalidLines = [];
 
             // Data Validation
-            for (const line of lines) {
-                const error = validateLine(line);
+            for (let i = 0; i < totalLines; i++) {
+                const error = validateLine(lines[i]);
                 if (error) {
-                    invalidLines.push(`${line} - ${error}`);
+                    invalidLines.push(`Line ${i + 1}: ${lines[i]} - ${error}`);
                 }
             }
 
@@ -188,57 +187,47 @@
 
             logToTerminal(`✅ Validation successful for ${inputId}. Uploading ${totalLines} records...`);
 
-            for (let i = 0; i < totalLines; i += batchSize) {
-                const batchLines = lines.slice(i, i + batchSize);
-                const batchUpdates = {};
-
-                for (const line of batchLines) {
-                    const validPattern = /^(\d{6})\s*\(([^)]+)\)\s*\[Referred:\s*([^\]]*)\]?\s*$/;
-                    const match = line.match(validPattern);
-                    if (match) {
-                        const roll = match[1].trim();
-                        const gpaData = {};
-                        let semesterCount = 0;
-                        const gpaEntries = match[2].split(",");
-                        gpaEntries.forEach(entry => {
-                            if (semesterCount < 8) {
-                                const [key, value] = entry.split(":").map(str => str.trim());
-                                if (key && value) {
-                                    if (value.toLowerCase() === "ref") {
-                                        gpaData[key] = "Referred";
-                                    } else if (!isNaN(value)) {
-                                        gpaData[key] = parseFloat(value);
-                                    } else if (value.toLowerCase() === "not published yet") {
-                                        gpaData[key] = "Not Published Yet";
-                                    }
-                                    semesterCount++;
+            for (let i = 0; i < totalLines; i++) {
+                const line = lines[i];
+                const validPattern = /^(\d{6})\s*\(([^)]+)\)\s*\[Referred:\s*([^\]]*)\]?\s*$/;
+                const match = line.match(validPattern);
+                if (match) {
+                    const roll = match[1].trim();
+                    const gpaData = {};
+                    let semesterCount = 0;
+                    const gpaEntries = match[2].split(",");
+                    gpaEntries.forEach(entry => {
+                        if (semesterCount < 8) {
+                            const [key, value] = entry.split(":").map(str => str.trim());
+                            if (key && value) {
+                                if (value.toLowerCase() === "ref") {
+                                    gpaData[key] = "Referred";
+                                } else if (!isNaN(value)) {
+                                    gpaData[key] = parseFloat(value);
+                                } else if (value.toLowerCase() === "not published yet") {
+                                    gpaData[key] = "Not Published Yet";
                                 }
+                                semesterCount++;
                             }
-                        });
-                        const referredSubjects = match[3] ? match[3].trim().split(",").map(subject => subject.trim()) : [];
-                        if (Object.keys(gpaData).length > 0 || referredSubjects.length > 0) {
-                            batchUpdates[`results/${roll}`] = { gpa: gpaData, referred: referredSubjects };
                         }
+                    });
+                    const referredSubjects = match[3] ? match[3].trim().split(",").map(subject => subject.trim()) : [];
+                    if (Object.keys(gpaData).length > 0 || referredSubjects.length > 0) {
+                        const updateData = { gpa: gpaData, referred: referredSubjects };
+                        try {
+                            await update(ref(db, `results/${roll}`), updateData);
+                            uploadedCount++;
+                            logToTerminal(`[+] Line ${i + 1}: ${line.substring(0, 60)}... - Success`);
+                        } catch (error) {
+                            console.error(`❌ Firebase Upload Error (Line ${i + 1}, ${inputId}):`, error);
+                            logToTerminal(`[-] Line ${i + 1}: ${line.substring(0, 60)}... - Error: ${error.message}`);
+                            failedCount++;
+                        }
+                    } else {
+                        logToTerminal(`[>] Line ${i + 1}: ${line.substring(0, 60)}... - No valid data`);
                     }
                 }
-
-                if (Object.keys(batchUpdates).length > 0) {
-                    try {
-                        await update(ref(db), batchUpdates);
-                        uploadedCount += Object.keys(batchUpdates).length;
-                        logToTerminal(`💾 Uploaded batch for ${inputId}: ${Object.keys(batchUpdates).length} records (${uploadedCount}/${totalLines})`);
-                        progressBar.innerText = `⬆️ Uploaded: ${uploadedCount}/${totalLines}`;
-                    } catch (error) {
-                        console.error(`❌ Firebase Upload Error (${inputId}):`, error);
-                        logToTerminal(`🔥 Error uploading batch for ${inputId}: ${error}`);
-                        progressBar.innerText = `🔥 Error`;
-                        failedCount += Object.keys(batchUpdates).length;
-                        overallStatus.innerText = `⚠️ Uploads in progress. ${failedCount} errors so far. Check terminal.`;
-                        // Optionally, you might want to stop further uploads for this textarea on error
-                    }
-                } else if (batchLines.length > 0) {
-                    logToTerminal(`💨 No valid results in batch for ${inputId} (${uploadedCount}/${totalLines})`);
-                }
+                progressBar.innerText = `⬆️ Uploading: ${uploadedCount + failedCount}/${totalLines}`;
             }
 
             logToTerminal(`✅ Finished uploading for ${inputId}: ${uploadedCount} successful, ${failedCount} failed.`);
