@@ -153,10 +153,11 @@
         }
 
         function validateLine(line) {
-            const validPattern = /^(\d{6})\s*\(([^)]+)\)\s*$/; // Modified regex
+            // More specific regex to capture roll and GPA, ignoring other parts
+            const validPattern = /^(\d{6})\s*\(CGPA:.*?\)\s*\((.*?)\)\s*\[Referred:.*?\]$/;
             const match = line.match(validPattern);
             if (!match) {
-                return "❌ Invalid Format (Expected: Roll(sem1:gpa1,sem2:gpa2,...))";
+                return "❌ Invalid Format (Expected: Roll (CGPA: ...) (sem1: gpa1, ...) [Referred: ...])";
             }
 
             const gpaPart = match[2];
@@ -183,8 +184,10 @@
                 const batchSize = Object.keys(batchUpdates).length;
                 successfulUploads.count += batchSize;
                 for (let i = startIndex; i < endIndex; i++) {
-                    if (!validateLine(lines[i])) {
-                        successfulUploads.lines.push(`Line ${i + 1}: ${lines[i].substring(0, 60)}... - Success`);
+                    const line = lines[i];
+                    const rollMatch = line.match(/^(\d{6})/);
+                    if (rollMatch && !validateLine(line)) {
+                        successfulUploads.lines.push(`Line ${i + 1}: ${rollMatch[1]}... - Success`);
                     }
                 }
                 return true;
@@ -192,8 +195,10 @@
                 console.error(`❌ Firebase Upload Error (${inputId}):`, error);
                 failedUploads.count += Object.keys(batchUpdates).length;
                 for (let i = startIndex; i < endIndex; i++) {
-                    if (!validateLine(lines[i])) {
-                        failedUploads.lines.push(`Line ${i + 1}: ${lines[i].substring(0, 60)}... - Error: ${error.message}`);
+                    const line = lines[i];
+                    const rollMatch = line.match(/^(\d{6})/);
+                    if (rollMatch && !validateLine(line)) {
+                        failedUploads.lines.push(`Line ${i + 1}: ${rollMatch[1]}... - Error: ${error.message}`);
                     }
                 }
                 return false;
@@ -210,7 +215,7 @@
             const inputText = inputTextarea.value.trim();
             const lines = inputText.split("\n");
             const totalLines = lines.length;
-            const batchSize = 1000; // Increased batch size to 1000
+            const batchSize = 1000;
             const successfulUploads = { count: 0, lines: [] };
             const failedUploads = { count: 0, lines: [] };
             const invalidLines = [];
@@ -247,7 +252,8 @@
 
                 for (let j = 0; j < batchLines.length; j++) {
                     const line = batchLines[j];
-                    const match = line.match(/^(\d{6})\s*\(([^)]+)\)\s*$/);
+                    // More specific regex to capture roll and GPA data
+                    const match = line.match(/^(\d{6})\s*\(CGPA:.*?\)\s*\((.*?)\)\s*\[Referred:.*?\]$/);
                     if (match) {
                         const roll = match[1].trim();
                         const gpaData = {};
@@ -265,7 +271,10 @@
                         if (Object.keys(gpaData).length > 0) {
                             batchUpdates[`non_referred_students/${roll}`] = { gpa: gpaData };
                         } else {
-                            successfulUploads.lines.push(`Line ${i + j + 1}: ${line.substring(0, 60)}... - No GPA data`);
+                            const rollOnlyMatch = line.match(/^(\d{6})/);
+                            if (rollOnlyMatch) {
+                                successfulUploads.lines.push(`Line ${i + j + 1}: ${rollOnlyMatch[1]}... - No GPA data found`);
+                            }
                         }
                     }
                 }
