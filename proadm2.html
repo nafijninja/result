@@ -25,20 +25,13 @@
             padding: 10px;
         }
 
-        .upload-section textarea,
-        .upload-section input[type="file"] {
+        .upload-section textarea {
             width: 100%;
+            height: 150px;
             margin-bottom: 10px;
         }
 
-        .upload-section textarea {
-            height: 150px;
-        }
-
         .upload-progress-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
             margin-bottom: 5px;
         }
 
@@ -69,56 +62,40 @@
         <div id="terminal" class="terminal"></div>
 
         <div class="upload-section">
-            <label for="fileInput1">Upload File (TXT/CSV):</label>
-            <input type="file" id="fileInput1" accept=".txt,.csv">
-            <textarea id="resultInput1" placeholder="Or paste data here..."></textarea>
+            <textarea id="resultInput1" placeholder="Paste data here..."></textarea>
             <div class="upload-progress-container">
-                <button class="uploadButton" data-input-id="resultInput1" data-file-input-id="fileInput1">Upload Batch 1</button>
-                <button class="cancelButton" data-input-id="resultInput1" disabled>Cancel</button>
+                <button class="uploadButton" data-input-id="resultInput1">Upload Batch 1</button>
                 <progress id="progressBar1" class="upload-progress" value="0" max="100"></progress>
-                <span id="progressPercent1">0%</span>
             </div>
             <p class="validation-error" id="validationError1"></p>
             <div id="logArea1" class="log-messages"></div>
         </div>
 
         <div class="upload-section">
-            <label for="fileInput2">Upload File (TXT/CSV):</label>
-            <input type="file" id="fileInput2" accept=".txt,.csv">
-            <textarea id="resultInput2" placeholder="Or paste data here..."></textarea>
+            <textarea id="resultInput2" placeholder="Paste data here..."></textarea>
             <div class="upload-progress-container">
-                <button class="uploadButton" data-input-id="resultInput2" data-file-input-id="fileInput2">Upload Batch 2</button>
-                <button class="cancelButton" data-input-id="resultInput2" disabled>Cancel</button>
+                <button class="uploadButton" data-input-id="resultInput2">Upload Batch 2</button>
                 <progress id="progressBar2" class="upload-progress" value="0" max="100"></progress>
-                <span id="progressPercent2">0%</span>
             </div>
             <p class="validation-error" id="validationError2"></p>
             <div id="logArea2" class="log-messages"></div>
         </div>
 
         <div class="upload-section">
-            <label for="fileInput3">Upload File (TXT/CSV):</label>
-            <input type="file" id="fileInput3" accept=".txt,.csv">
-            <textarea id="resultInput3" placeholder="Or paste data here..."></textarea>
+            <textarea id="resultInput3" placeholder="Paste data here..."></textarea>
             <div class="upload-progress-container">
-                <button class="uploadButton" data-input-id="resultInput3" data-file-input-id="fileInput3">Upload Batch 3</button>
-                <button class="cancelButton" data-input-id="resultInput3" disabled>Cancel</button>
+                <button class="uploadButton" data-input-id="resultInput3">Upload Batch 3</button>
                 <progress id="progressBar3" class="upload-progress" value="0" max="100"></progress>
-                <span id="progressPercent3">0%</span>
             </div>
             <p class="validation-error" id="validationError3"></p>
             <div id="logArea3" class="log-messages"></div>
         </div>
 
         <div class="upload-section">
-            <label for="fileInput4">Upload File (TXT/CSV):</label>
-            <input type="file" id="fileInput4" accept=".txt,.csv">
-            <textarea id="resultInput4" placeholder="Or paste data here..."></textarea>
+            <textarea id="resultInput4" placeholder="Paste data here..."></textarea>
             <div class="upload-progress-container">
-                <button class="uploadButton" data-input-id="resultInput4" data-file-input-id="fileInput4">Upload Batch 4</button>
-                <button class="cancelButton" data-input-id="resultInput4" disabled>Cancel</button>
+                <button class="uploadButton" data-input-id="resultInput4">Upload Batch 4</button>
                 <progress id="progressBar4" class="upload-progress" value="0" max="100"></progress>
-                <span id="progressPercent4">0%</span>
             </div>
             <p class="validation-error" id="validationError4"></p>
             <div id="logArea4" class="log-messages"></div>
@@ -151,18 +128,11 @@
         const terminal = document.getElementById("terminal");
         const overallStatus = document.getElementById("overallStatus");
         const uploadButtons = document.querySelectorAll(".uploadButton");
-        const cancelButton = document.querySelectorAll(".cancelButton");
         const progressBars = {
             resultInput1: document.getElementById("progressBar1"),
             resultInput2: document.getElementById("progressBar2"),
             resultInput3: document.getElementById("progressBar3"),
             resultInput4: document.getElementById("progressBar4"),
-        };
-        const progressPercents = {
-            resultInput1: document.getElementById("progressPercent1"),
-            resultInput2: document.getElementById("progressPercent2"),
-            resultInput3: document.getElementById("progressPercent3"),
-            resultInput4: document.getElementById("progressPercent4"),
         };
         const validationErrors = {
             resultInput1: document.getElementById("validationError1"),
@@ -176,7 +146,6 @@
             resultInput3: document.getElementById("logArea3"),
             resultInput4: document.getElementById("logArea4"),
         };
-        const uploadStates = {}; // To track if an upload is in progress and for cancellation
 
         function logToTerminal(message) {
             terminal.innerHTML += `<span style="color: #00ff00;">> </span>${message}<br>`;
@@ -184,7 +153,7 @@
         }
 
         function validateLine(line) {
-            const validPattern = /^(\d{6})\s*\(([^)]+)\)\s*$/; // Modified regex to exclude "[Referred:...]" part
+            const validPattern = /^(\d{6})\s*\(([^)]+)\)\s*$/; // Modified regex
             const match = line.match(validPattern);
             if (!match) {
                 return "❌ Invalid Format (Expected: Roll(sem1:gpa1,sem2:gpa2,...))";
@@ -205,7 +174,7 @@
                     return `❌ Invalid GPA entry format: ${entry}`;
                 }
             }
-            return null; // Line is valid for non-referred students
+            return null;
         }
 
         async function processAndUploadBatch(inputId, lines, startIndex, endIndex, batchUpdates, successfulUploads, failedUploads) {
@@ -214,7 +183,7 @@
                 const batchSize = Object.keys(batchUpdates).length;
                 successfulUploads.count += batchSize;
                 for (let i = startIndex; i < endIndex; i++) {
-                    if (!validateLine(lines[i])) { // Only log successful if validation passed
+                    if (!validateLine(lines[i])) {
                         successfulUploads.lines.push(`Line ${i + 1}: ${lines[i].substring(0, 60)}... - Success`);
                     }
                 }
@@ -223,7 +192,7 @@
                 console.error(`❌ Firebase Upload Error (${inputId}):`, error);
                 failedUploads.count += Object.keys(batchUpdates).length;
                 for (let i = startIndex; i < endIndex; i++) {
-                    if (!validateLine(lines[i])) { // Only log failed if validation passed
+                    if (!validateLine(lines[i])) {
                         failedUploads.lines.push(`Line ${i + 1}: ${lines[i].substring(0, 60)}... - Error: ${error.message}`);
                     }
                 }
@@ -231,49 +200,28 @@
             }
         }
 
-        async function uploadResults(inputId, fileInputId) {
+        async function uploadResults(inputId) {
             const inputTextarea = document.getElementById(inputId);
-            const fileInput = document.getElementById(fileInputId);
             const progressBar = progressBars[inputId];
-            const progressPercent = progressPercents[inputId];
             const validationError = validationErrors[inputId];
             const logArea = logAreas[inputId];
             const uploadButton = Array.from(uploadButtons).find(btn => btn.dataset.inputId === inputId);
-            const cancelButtonElement = Array.from(cancelButton).find(btn => btn.dataset.inputId === inputId);
 
-            let inputText = inputTextarea.value.trim();
-            let lines = [];
-
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                inputText = await file.text();
-                inputTextarea.value = inputText; // Populate textarea for user review
-            }
-
-            if (!inputText) {
-                alert(`❌ Please paste data or upload a file in ${inputId}!`);
-                progressBar.value = 0;
-                progressPercent.innerText = "0%";
-                return;
-            }
-
-            lines = inputText.split("\n");
+            const inputText = inputTextarea.value.trim();
+            const lines = inputText.split("\n");
             const totalLines = lines.length;
-            const batchSize = 500;
+            const batchSize = 1000; // Increased batch size to 1000
             const successfulUploads = { count: 0, lines: [] };
             const failedUploads = { count: 0, lines: [] };
             const invalidLines = [];
             let processedCount = 0;
-            uploadStates[inputId] = { uploading: true, cancelled: false };
 
             progressBar.value = 0;
             progressBar.max = totalLines;
-            progressPercent.innerText = "0%";
             validationError.innerText = "";
             logArea.innerHTML = "";
             uploadButton.disabled = true;
-            cancelButtonElement.disabled = false;
-            logToTerminal(`🚀 Starting upload for <span class="math-inline">\{inputId\} \(</span>{totalLines} lines)...`);
+            logToTerminal(`🚀 Starting upload for ${inputId} (${totalLines} lines)...`);
 
             // Validation
             for (let i = 0; i < totalLines; i++) {
@@ -287,19 +235,11 @@
             if (invalidLines.length > 0) {
                 validationError.innerText = `⚠️ Found ${invalidLines.length} invalid lines. Check terminal.`;
                 progressBar.value = 0;
-                progressPercent.innerText = "0%";
                 uploadButton.disabled = false;
-                cancelButtonElement.disabled = true;
-                delete uploadStates[inputId];
                 return;
             }
 
             for (let i = 0; i < totalLines; i += batchSize) {
-                if (uploadStates[inputId].cancelled) {
-                    logToTerminal(`🛑 Upload for ${inputId} cancelled.`);
-                    break;
-                }
-
                 const batchLines = lines.slice(i, i + batchSize);
                 const batchUpdates = {};
                 const batchStartIndex = i;
@@ -323,7 +263,7 @@
                             }
                         });
                         if (Object.keys(gpaData).length > 0) {
-                            batchUpdates[`non_referred_students/${roll}`] = { gpa: gpaData }; // Changed database path
+                            batchUpdates[`non_referred_students/${roll}`] = { gpa: gpaData };
                         } else {
                             successfulUploads.lines.push(`Line ${i + j + 1}: ${line.substring(0, 60)}... - No GPA data`);
                         }
@@ -331,7 +271,7 @@
                 }
 
                 if (Object.keys(batchUpdates).length > 0) {
-                    logToTerminal(`📤 Uploading batch ${Math.ceil((i + batchSize) / batchSize)} for <span class="math-inline">\{inputId\} \(</span>{Object.keys(batchUpdates).length} records)...`);
+                    logToTerminal(`📤 Uploading batch ${Math.ceil((i + batchSize) / batchSize)} for ${inputId} (${Object.keys(batchUpdates).length} records)...`);
                     const success = await processAndUploadBatch(inputId, lines, batchStartIndex, batchEndIndex, batchUpdates, successfulUploads, failedUploads);
                     if (success) {
                         logToTerminal(`✅ Batch ${Math.ceil((i + batchSize) / batchSize)} uploaded successfully.`);
@@ -342,39 +282,19 @@
 
                 processedCount += batchLines.length;
                 progressBar.value = processedCount;
-                progressPercent.innerText = `${Math.floor((processedCount / totalLines) * 100)}%`;
             }
 
             logArea.innerHTML = successfulUploads.lines.join("<br>") + (failedUploads.lines.length > 0 ? "<br><br>❌ Failed Records:<br>" + failedUploads.lines.join("<br>") : "");
             logToTerminal(`✅ Finished upload for ${inputId}. Successful: ${successfulUploads.count}, Failed: ${failedUploads.count}, Invalid: ${invalidLines.length}.`);
             overallStatus.innerText = `✅ Upload for ${inputId} finished. Successful: ${successfulUploads.count}, Failed: ${failedUploads.count}, Invalid: ${invalidLines.length}. Check individual log area for details.`;
             uploadButton.disabled = false;
-            cancelButtonElement.disabled = true;
-            delete uploadStates[inputId];
+            inputTextarea.value = ""; // Clear textarea after upload
         }
 
         uploadButtons.forEach(button => {
             button.addEventListener("click", async (event) => {
                 const inputId = event.target.dataset.inputId;
-                const fileInputId = event.target.dataset.fileInputId;
-              uploadStates[inputId] = { uploading: true, cancelled: false };
-                await uploadResults(inputId, fileInputId);
-            });
-        });
-
-        cancelButton.forEach(button => {
-            button.addEventListener("click", (event) => {
-                const inputId = event.target.dataset.inputId;
-                if (uploadStates[inputId] && uploadStates[inputId].uploading) {
-                    uploadStates[inputId].cancelled = true;
-                    const cancelButtonElement = event.target;
-                    cancelButtonElement.disabled = true;
-                    const uploadButtonElement = Array.from(uploadButtons).find(btn => btn.dataset.inputId === inputId);
-                    if (uploadButtonElement) {
-                        uploadButtonElement.disabled = false;
-                    }
-                    logToTerminal(`⚠️ Cancellation requested for ${inputId}...`);
-                }
+                await uploadResults(inputId);
             });
         });
     </script>
